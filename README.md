@@ -10,7 +10,7 @@ It could be donde in group by lastname or individually by id.
 SQLManager, class to interact with the Database.
 
 ### Tests
-SQLManagert -> Testing for the services, it uses jUnit
+SQLManager -> Testing for the services, it uses jUnit
 SQLManagerIntegrationById -> Testing of the service in a concurrent way
 SQLManagerIntegrationByLastname ->vTesting of the service in a concurrent way
 
@@ -29,6 +29,7 @@ You could configure the project with your IDE or from the terminal with the `gra
 
 ## Known Issues
 
+```
 org.testcontainers.containers.ContainerLaunchException: Container startup failed
 	at org.testcontainers.containers.GenericContainer.doStart(GenericContainer.java:330)
 	at org.testcontainers.containers.GenericContainer.start(GenericContainer.java:311)
@@ -42,6 +43,7 @@ Caused by: java.lang.IllegalStateException: Could not find a valid Docker enviro
 	at org.testcontainers.dockerclient.DockerClientProviderStrategy.lambda$getFirstValidStrategy$3(DockerClientProviderStrategy.java:163)
 	at java.base/java.util.Optional.orElseThrow(Optional.java:401)
 	at org.testcontainers.dockerclient.DockerClientProviderStrategy.getFirstValidStrategy(DockerClientProviderStrategy.java:155)
+```
 
 **Solution: Start your docker env**
 
