@@ -26,8 +26,8 @@ dependencies {
 
     // Testing dependencies
     testImplementation 'junit:junit:4.12'
-	testCompile group: 'org.testcontainers', name: 'testcontainers', version: '1.14.2'
-	testCompile group: 'org.testcontainers', name: 'mysql', version: '1.14.2'
+	compile group: 'org.testcontainers', name: 'testcontainers', version: '1.14.2'
+	compile group: 'org.testcontainers', name: 'mysql', version: '1.14.2'
     // Logging dependencies
 	compile group: 'org.slf4j', name: 'slf4j-api', version: '2.0.0-alpha1'
 	testCompile group: 'org.slf4j', name: 'slf4j-log4j12', version: '2.0.0-alpha1'

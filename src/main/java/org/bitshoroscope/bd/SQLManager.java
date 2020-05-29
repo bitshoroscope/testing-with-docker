@@ -1,4 +1,4 @@
-package org.bitshoroscope;
+package org.bitshoroscope.bd;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -10,6 +10,10 @@ import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testcontainers.containers.MySQLContainer;
+
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
 public class SQLManager {
 
@@ -94,5 +98,5 @@ public class SQLManager {
 			throw new IllegalArgumentException("Driver not found: " + e.getMessage(), e);
 		}
 	}
-
+	
 }

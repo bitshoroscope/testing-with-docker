@@ -1,13 +1,14 @@
 package org.bitshoroscope;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Random;
 
+import org.bitshoroscope.bd.DataSourceFactory;
+import org.bitshoroscope.bd.SQLManager;
+import org.bitshoroscope.service.Zombificator;
+import org.bitshoroscope.service.impl.ZombificatorImpl;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,11 +16,12 @@ import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
+
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class SqlManagerTest {
 
         private MySQLContainer mysql;
-        private static final Logger logger = LoggerFactory.getLogger(SQLManagerIntegrationMain.class);
+        private static final Logger LOG = LoggerFactory.getLogger(SQLManagerIntegrationByLastname.class);
         private QueryUtils queryUtils = new QueryUtils();
 
         @Test
@@ -33,24 +35,18 @@ public class SqlManagerTest {
 
         @Test
         public void testManagerWithDataSource() throws IOException, SQLException {
-
-                int samplingSize = 100;
                 createContainer();
-
-                logger.debug("Creando tablas...");
+                LOG.info("Creando tablas...");
                 queryUtils.setupTables(mysql);
-                logger.debug("Fin creación tablas...");
+                LOG.info("Fin creación tablas...");
 
-                SQLManager manager = new SQLManager(queryUtils.getHikariDataSourceWithDriverClassName(mysql));
-
-                executeOperations(manager, 100);
-
-                QueryCounter queryCounter = executeOperations(manager, samplingSize);
-                assertEquals(queryCounter.getInserts() + queryCounter.getUpdates(), samplingSize);
-
-                Integer res = manager.querySingleValue("SELECT count(*) from characters", manager.getConnection(),
-                                Integer.class);
-                assertTrue(res > 0);
+                SQLManager manager = new SQLManager(DataSourceFactory.getHikariDataSourceWithDriverClassName(mysql));
+                Zombificator zombificator = new ZombificatorImpl(manager);
+                zombificator.zombify("Simpson");
+                
+                Long res = manager.querySingleValue("SELECT count(*) from characters WHERE status = 'ZOMBIE'", manager.getConnection(),
+                                Long.class);
+                assertEquals(Long.valueOf(7l), res);
 
         }
 
@@ -59,39 +55,10 @@ public class SqlManagerTest {
                 mysql.withDatabaseName("testing")
                 	.withUsername("testing")
                 	.withPassword("testing")
-                    .withLogConsumer(new Slf4jLogConsumer(logger))
+                    .withLogConsumer(new Slf4jLogConsumer(LOG))
                     .withExposedPorts(3306)
                     .waitingFor(Wait.forLogMessage("poolPropiedades - Added connection", 10));
                 mysql.start();
-        }
-
-        private QueryCounter executeOperations(SQLManager manager, final int samplingSize) {
-
-                int inserts = 0;
-                int updates = 0;
-
-                for (int i = 0; i < samplingSize; i++) {
-                        try (Connection conn = manager.getConnection()) {
-
-                                Random r = new Random();
-                                int idUser = r.nextInt(samplingSize);
-                                String queryOp = "";
-
-                                if (manager.executeExists("SELECT id FROM characters where id = " + idUser + ";", conn)) {
-                                        queryOp = "UPDATE characters SET status = 'ZOMBIE' WHERE id = " + idUser + ";";
-                                        updates++;
-
-                                } else {
-                                        queryOp = "INSERT INTO characters (name, lastname, status) VALUES ('Anonymous', 'Character', 'healthy');";
-                                        inserts++;
-                                }
-                                manager.executeUpsert(queryOp);
-                        } catch (IllegalArgumentException | SQLException e) {
-                                e.printStackTrace();
-                        }
-                }
-
-                return new QueryCounter(inserts, updates);
         }
 
         /**

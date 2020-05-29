@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.stream.Collectors;
 
+import org.bitshoroscope.bd.DataSourceFactory;
 import org.testcontainers.containers.MySQLContainer;
 
 import com.zaxxer.hikari.HikariConfig;
@@ -29,7 +30,7 @@ public class QueryUtils {
 	 */
 	public void setupTables(MySQLContainer mysql) throws IOException, SQLException {
 
-		try (HikariDataSource ds = getHikariDataSourceWithDriverClassName(mysql);
+		try (HikariDataSource ds = DataSourceFactory.getHikariDataSourceWithDriverClassName(mysql);
 				Connection conn = ds.getConnection();) {
 
 			String queryCreateUsersTable = readQueryFromFile("/database/createCharactersTable.sql");
@@ -56,28 +57,6 @@ public class QueryUtils {
 
 			return contents;
 		}
-	}
-
-	public HikariDataSource getHikariDataSourceWithDriverClassName(MySQLContainer containerRule) {
-		HikariConfig hikariConfig = new HikariConfig();
-		hikariConfig.setUsername("testing");
-		hikariConfig.setPassword("testing");
-		hikariConfig.setMinimumIdle(10);
-		hikariConfig.setConnectionTimeout(30000L);
-		hikariConfig.setDataSourceClassName("com.mysql.cj.jdbc.MysqlDataSource");
-		hikariConfig.setMaximumPoolSize(10);
-		hikariConfig.setPoolName("poolTesting");
-
-		hikariConfig.addDataSourceProperty("url", containerRule.getJdbcUrl());
-		hikariConfig.addDataSourceProperty("user", "testing");
-		hikariConfig.addDataSourceProperty("password", "testing");
-		hikariConfig.addDataSourceProperty("pinGlobalTxToPhysicalConnection", "true");
-		hikariConfig.addDataSourceProperty("prepStmtCacheSize", "150");
-		hikariConfig.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-		hikariConfig.addDataSourceProperty("cachePrepStmts", "true");
-		hikariConfig.addDataSourceProperty("useServerPrepStmts", "true");
-
-		return new HikariDataSource(hikariConfig);
 	}
 
 	/**
