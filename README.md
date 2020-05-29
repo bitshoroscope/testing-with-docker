@@ -28,3 +28,20 @@ Java
 You could configure the project with your IDE or from the terminal with the `gradle` command.
 
 ## Known Issues
+
+org.testcontainers.containers.ContainerLaunchException: Container startup failed
+	at org.testcontainers.containers.GenericContainer.doStart(GenericContainer.java:330)
+	at org.testcontainers.containers.GenericContainer.start(GenericContainer.java:311)
+
+Caused by: org.testcontainers.containers.ContainerFetchException: Can't get Docker image: RemoteDockerImage(imageName=mariadb:10.1.41, imagePullPolicy=DefaultPullPolicy())
+	at org.testcontainers.containers.GenericContainer.getDockerImageName(GenericContainer.java:1279)
+	at org.testcontainers.containers.GenericContainer.logger(GenericContainer.java:613)
+	at org.testcontainers.containers.GenericContainer.doStart(GenericContainer.java:320)
+	... 26 more
+Caused by: java.lang.IllegalStateException: Could not find a valid Docker environment. Please see logs and check configuration
+	at org.testcontainers.dockerclient.DockerClientProviderStrategy.lambda$getFirstValidStrategy$3(DockerClientProviderStrategy.java:163)
+	at java.base/java.util.Optional.orElseThrow(Optional.java:401)
+	at org.testcontainers.dockerclient.DockerClientProviderStrategy.getFirstValidStrategy(DockerClientProviderStrategy.java:155)
+
+**Solution: Start your docker env**
+
