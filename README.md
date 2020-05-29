@@ -10,9 +10,11 @@ It could be donde in group by lastname or individually by id.
 SQLManager, class to interact with the Database.
 
 ### Tests
-SQLManager -> Testing for the services, it uses jUnit
-SQLManagerIntegrationById -> Testing of the service in a concurrent way
-SQLManagerIntegrationByLastname ->vTesting of the service in a concurrent way
+`SQLManager.java` -> Testing for the services, it uses jUnit
+
+`SQLManagerIntegrationById.java` -> Testing of the service in a concurrent way
+
+`SQLManagerIntegrationByLastname.java` -> Testing of the service in a concurrent way
 
 ### Resources
 Queries to create tables and populate them.
